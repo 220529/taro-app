@@ -20,33 +20,6 @@
     width: 100%;
     position: absolute;
   }
-  .item {
-    height: 200px;
-    padding: 0 20px;
-    box-sizing: border-box;
-    .info {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      .left {
-        width: 100px;
-        height: 100px;
-      }
-      .right {
-        margin-left: 20px;
-        display: flex;
-        flex-direction: column;
-        text {
-          font-family: PingFangSC-Medium;
-          font-weight: 500;
-          font-size: 36px;
-        }
-      }
-    }
-    &:not(:last-child) {
-      border-bottom: 1px yellowgreen solid;
-    }
-  }
   .none {
     opacity: 0;
     z-index: -1;

@@ -1,13 +1,12 @@
+import Taro from "@tarojs/taro";
 import { throttle } from "lodash-es";
-import { createRef, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import Loading from "../../components/loading";
 import { fetchData } from "./mock";
 import Item from "./item";
 import style from "./style.module.scss";
 
-let itemHeight = 0;
-let screenCount = 0;
 const buffers = {
   top: 0.5,
   screen: 1.5,
@@ -16,28 +15,34 @@ const buffers = {
 
 const Virtualized = (props) => {
   const { items } = props;
-  const viewport = createRef();
-  const content = createRef();
-  const itemRef = createRef();
-
-  const [offet, setOffset] = useState({ start: 0, end: 0 });
+  const [offset, setOffset] = useState({ start: 0, end: 0 });
+  const [itemHeight, setItemHeight] = useState(0);
+  const [screenCount, setScreenCount] = useState(0);
   useEffect(() => {
-    // @ts-ignore
-    itemHeight = itemRef.current?.clientHeight;
-    // @ts-ignore
-    const screenHeight = viewport.current?.clientHeight;
-    screenCount = Math.ceil(screenHeight / itemHeight);
-    setOffset({ start: 0, end: screenCount * buffers.screen });
+    const query = Taro.createSelectorQuery();
+    query.select("#hidden").boundingClientRect();
+    query.select("#viewport").boundingClientRect();
+    query.exec((res) => {
+      if (res[0] && res[1]) {
+        const _height = res[0].height;
+        setItemHeight(_height);
+        const screenHeight = res[1].height;
+        const _count = Math.ceil(screenHeight / _height);
+        setScreenCount(_count);
+        setOffset({ start: 0, end: _count * buffers.screen });
+      }
+    });
   }, []);
   const bufferOffset = useMemo(() => {
     return {
-      top: Math.min(offet.start, Math.max(buffers.top * screenCount)),
-      bottom: Math.min(
-        items.length - offet.end,
-        Math.max(buffers.bottom * screenCount)
-      ),
+      top: Math.min(offset.start, Math.max(buffers.top * screenCount)) || 0,
+      bottom:
+        Math.min(
+          items.length - offset.end,
+          Math.max(buffers.bottom * screenCount)
+        ) || 0,
     };
-  }, [offet, screenCount]);
+  }, [offset, screenCount]);
   const onScroll = throttle((e) => {
     const start = Math.floor(e.detail.scrollTop / itemHeight);
     setOffset({ start, end: start + screenCount });
@@ -45,14 +50,16 @@ const Virtualized = (props) => {
 
   const renderList = useMemo(() => {
     return items.slice(
-      offet.start - bufferOffset.top,
-      offet.end + bufferOffset.bottom
+      offset.start - bufferOffset.top,
+      offset.end + bufferOffset.bottom
     );
-  }, [offet, bufferOffset, items]);
+  }, [offset, bufferOffset, items]);
 
   const translateY = useMemo(() => {
-    return (offet.start - bufferOffset.top) * itemHeight;
-  }, [offet, bufferOffset]);
+    const offsetTop = (offset.start - bufferOffset.top) * itemHeight;
+    return offsetTop || 0;
+    return;
+  }, [offset, bufferOffset]);
 
   return (
     <View className={style.container}>
@@ -62,11 +69,11 @@ const Virtualized = (props) => {
         </Text>
       </View>
       <ScrollView
-        ref={viewport}
-        className={style.viewport}
         scrollY
+        id="viewport"
         scrollWithAnimation
         onScroll={onScroll}
+        className={style.viewport}
       >
         <View
           className={style.faker}
@@ -74,7 +81,6 @@ const Virtualized = (props) => {
         />
         <View
           className={style.items}
-          ref={content}
           style={{ transform: `translate3d(0, ${translateY}px ,0)` }}
         >
           {renderList.map((i, index) => (
@@ -82,14 +88,14 @@ const Virtualized = (props) => {
           ))}
         </View>
       </ScrollView>
-      <View ref={itemRef} className={style.none}>
+      <View className={style.none} id="hidden">
         <Item data={items[0]} />
       </View>
     </View>
   );
 };
 
-const num = 10000 * 0.1;
+const num = 10000 * 0.2;
 const App = () => {
   const [items, setItems] = useState([]);
   const init = async () => {
