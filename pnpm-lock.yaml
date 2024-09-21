@@ -53,6 +53,12 @@ importers:
       '@tarojs/taro':
         specifier: 4.0.5
         version: 4.0.5(@tarojs/components@4.0.5(@tarojs/helper@4.0.5)(@tarojs/shared@4.0.5)(@types/react@18.3.8)(postcss@8.4.47)(react@18.3.1)(rollup@3.29.5))(@tarojs/helper@4.0.5)(@tarojs/shared@4.0.5)(@types/react@18.3.8)(postcss@8.4.47)(rollup@3.29.5)
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
+      mockjs:
+        specifier: ^1.1.0
+        version: 1.1.0
       react:
         specifier: ^18.0.0
         version: 18.3.1
@@ -5458,6 +5464,10 @@ packages:
 
   mobile-detect@1.4.5:
     resolution: {integrity: sha512-yc0LhH6tItlvfLBugVUEtgawwFU2sIe+cSdmRJJCTMZ5GEJyLxNyC/NIOAOGk67Fa8GNpOttO3Xz/1bHpXFD/g==}
+
+  mockjs@1.1.0:
+    resolution: {integrity: sha512-eQsKcWzIaZzEZ07NuEyO4Nw65g0hdWAyurVol1IPl1gahRwY+svqzfgfey8U8dahLwG44d6/RwEzuK52rSa/JQ==}
+    hasBin: true
 
   mrmime@2.0.0:
     resolution: {integrity: sha512-eu38+hdgojoyq63s+yTpN4XMBdt5l8HhMhc4VKLO9KM5caLIBvUm4thi7fFaxyTmCKeNnXZ5pAlBwCUnhA09uw==}
@@ -13708,7 +13718,7 @@ snapshots:
       '@babel/register': 7.24.6(@babel/core@7.25.2)
       babel-core: 7.0.0-bridge.0(@babel/core@7.25.2)
       colors: 1.4.0
-      flow-parser: 0.121.0
+      flow-parser: 0.246.0
       graceful-fs: 4.2.11
       micromatch: 3.1.10
       neo-async: 2.6.2
@@ -14360,6 +14370,10 @@ snapshots:
   mkdirp@1.0.4: {}
 
   mobile-detect@1.4.5: {}
+
+  mockjs@1.1.0:
+    dependencies:
+      commander: 9.5.0
 
   mrmime@2.0.0: {}
 
