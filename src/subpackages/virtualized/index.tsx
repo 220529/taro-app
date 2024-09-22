@@ -43,10 +43,15 @@ const Virtualized = (props) => {
         ) || 0,
     };
   }, [offset, screenCount]);
-  const onScroll = throttle((e) => {
-    const start = Math.floor(e.detail.scrollTop / itemHeight);
-    setOffset({ start, end: start + screenCount });
-  }, 1000);
+  const [oldTime, setOldTime] = useState(0);
+  const onScroll = (e) => {
+    const time = Date.now();
+    if (time - oldTime > 15) {
+      setOldTime(time);
+      const start = Math.floor(e.detail.scrollTop / itemHeight);
+      setOffset({ start, end: start + screenCount });
+    }
+  };
 
   const renderList = useMemo(() => {
     return items.slice(
@@ -58,7 +63,6 @@ const Virtualized = (props) => {
   const translateY = useMemo(() => {
     const offsetTop = (offset.start - bufferOffset.top) * itemHeight;
     return offsetTop || 0;
-    return;
   }, [offset, bufferOffset]);
 
   return (
